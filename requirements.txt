@@ -1,0 +1,29 @@
+# Python 3.10 is required
+# Create environment: conda create -n rag_project python=3.10
+# Activate:          conda activate rag_project
+
+# === Core LangChain ===
+langchain
+langchain-core
+langchain-community
+langchain-huggingface
+langchain-ollama
+langchain-text-splitters
+
+# === Vector Store ===
+faiss-cpu
+
+# === PDF Loading ===
+pypdf
+
+# === Embeddings (HuggingFace, runs on CPU) ===
+sentence-transformers
+transformers
+torch
+
+# === Jupyter ===
+jupyter
+ipywidgets
+
+# === Utilities ===
+tqdm
