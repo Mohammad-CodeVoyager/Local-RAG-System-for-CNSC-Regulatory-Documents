@@ -12,6 +12,7 @@ import subprocess, sys
 from pathlib import Path
 
 # --- Streamlit ---------------------------------------------------------------
+
 import streamlit as st
 
 # --- LangChain Core ----------------------------------------------------------
@@ -38,9 +39,9 @@ FAISS_DIR = os.path.join(os.getcwd(), "faiss_index") # Where the vector DB is sa
 
 print(f"PDF folder : {DATA_DIR}")
 print(f"FAISS index: {FAISS_DIR}")
-print("All imports loaded successfully.")
 
 # --- User defined Libraries ------------------------------------------------------
-from retrival_chain import build_rag_chain
 from text_splitter import load_and_process_pdfs
 from model_n_embedding import get_embedding_model, create_vectorstore, save_vectorstore, load_vectorstore
+
+print("All imports loaded successfully.")

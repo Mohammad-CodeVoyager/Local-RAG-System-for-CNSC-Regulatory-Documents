@@ -6,7 +6,8 @@
 #   1. FAISS index built (run: python vector_database_creator.py)
 #   2. Ollama running (ollama serve) with llama3 pulled (ollama pull llama3)
 # =============================================================================
-from imports import *   # Centralized imports for the entire project
+
+from retrival_chain import build_rag_chain
 from imports import *   # Centralized imports for the entire project
 
 
@@ -17,8 +18,6 @@ if _req_path.exists():
         [sys.executable, "-m", "pip", "install", "-q", "-r", str(_req_path)]
     )
 
-# --- Import the chain builder from retrival_chain.py -------------------------
-from retrival_chain import build_rag_chain
 
 
 # --- Cache the RAG chain so it loads once and persists across reruns ----------
@@ -38,7 +37,7 @@ def main():
     )
 
     # --- Header --------------------------------------------------------------
-    st.title("🔬 CNSC REGDOC-2.6.1 — RAG Assistant")
+    st.title("🔬 CNSC Regulatory Documents — RAG Assistant")
     st.caption(
         "Ask plain-language questions about CNSC Reliability Programs. "
         "Answers are grounded **strictly** in the uploaded regulatory documents."
@@ -54,16 +53,28 @@ def main():
             "- **Model:** Llama 3 (local via Ollama)\n"
             "- **Embeddings:** all-MiniLM-L6-v2 (CPU)\n"
             "- **Vector DB:** FAISS\n"
-            "- **Documents:** CNSC REGDOC-2.6.1"
         )
         st.divider()
-        st.markdown("**Sample questions:**")
+        st.markdown("**📂 Loaded Documents:**")
         st.markdown(
-            "- What is the purpose of a reliability program?\n"
-            "- What does REGDOC-2.6.1 say about safety system testing?\n"
-            "- Define reliability targets for safety-important systems.\n"
-            "- What are the reporting requirements?"
+            "1. REGDOC-2-6-1 — Reliability Programs for Nuclear Power Plants\n"
+            "2. CAT-304\n"
+            "3. 2364f-tg000 (EN)\n"
+            "4. Safety Manual for Fanuc Educational Cell"
         )
+        st.divider()
+        st.markdown("**💡 Try a question:**")
+        sample_questions = [
+            "What is the purpose of a reliability program?",
+            "What does REGDOC-2.6.1 say about safety system testing?",
+            "What safety procedures apply to the Fanuc educational cell?",
+            "What are the reporting requirements?",
+            "Summarize the key points of CAT-304.",
+            "What are reliability targets for safety-important systems?",
+        ]
+        for q in sample_questions:
+            if st.button(q, use_container_width=True):
+                st.session_state["_sample_q"] = q
 
     # --- Chat history --------------------------------------------------------
     if "messages" not in st.session_state:
@@ -75,7 +86,10 @@ def main():
             st.markdown(msg["content"])
 
     # --- User input ----------------------------------------------------------
-    if question := st.chat_input("Ask a question about CNSC REGDOC-2.6.1…"):
+    # Pick up a sample question if one was clicked, otherwise use chat input
+    question = st.session_state.pop("_sample_q", None) or st.chat_input("Ask a question about the loaded documents…")
+
+    if question:
         # Show user message
         st.session_state.messages.append({"role": "user", "content": question})
         with st.chat_message("user"):

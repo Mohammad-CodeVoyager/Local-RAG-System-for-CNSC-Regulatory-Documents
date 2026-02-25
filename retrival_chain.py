@@ -23,13 +23,30 @@ def build_rag_chain():
     vectorstore = load_vectorstore(embeddings)
 
     # --- 1. Configuring the local LLM via Ollama ----------------------------
-    # Make sure Ollama is running (`ollama serve`) and the model is pulled
-    # (`ollama pull llama3`) before executing this cell.
+    # Auto-pull the model if it hasn't been downloaded yet.
+    MODEL_NAME = "llama3"
+    try:
+        subprocess.run(
+            ["ollama", "list"],
+            capture_output=True, text=True, check=True
+        )
+    except FileNotFoundError:
+        raise RuntimeError(
+            "Ollama is not installed. Install it from https://ollama.com and run 'ollama serve'."
+        )
+
+    result = subprocess.run(
+        ["ollama", "list"], capture_output=True, text=True
+    )
+    if MODEL_NAME not in result.stdout:
+        print(f"Model '{MODEL_NAME}' not found locally. Pulling now (this may take a few minutes)...")
+        subprocess.run(["ollama", "pull", MODEL_NAME], check=True)
+
     llm = ChatOllama(
-        model="llama3",
+        model=MODEL_NAME,
         temperature=0,        # Deterministic answers — important for technical docs
     )
-    print("ChatOllama (llama3) ready.")
+    print(f"ChatOllama ({MODEL_NAME}) ready.")
 
     # --- 2. Building the prompt template ------------------------------------
     # {context} will be filled with the retrieved document chunks.
