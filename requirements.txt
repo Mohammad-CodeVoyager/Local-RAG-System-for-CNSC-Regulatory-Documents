@@ -25,5 +25,8 @@ torch
 jupyter
 ipywidgets
 
+# === Streamlit UI ===
+streamlit
+
 # === Utilities ===
 tqdm

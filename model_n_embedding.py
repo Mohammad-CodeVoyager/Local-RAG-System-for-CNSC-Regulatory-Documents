@@ -1,7 +1,7 @@
 from imports import *   
 
 # =============================================================================
-# Cell 3: Vector Database (The Brain)
+# Vector Database (The Brain)
 # =============================================================================
 # This cell converts text chunks into numerical vectors (embeddings) and stores
 # them in a FAISS index.  FAISS lets us do lightning-fast similarity search so
@@ -31,3 +31,18 @@ def create_vectorstore(chunks, embeddings):
 def save_vectorstore(vectorstore):
     vectorstore.save_local(FAISS_DIR)
     print(f"FAISS index saved to '{FAISS_DIR}'.")
+
+def load_vectorstore(embeddings):
+    """Load previously saved FAISS vectorstore from disk."""
+    if not os.path.exists(FAISS_DIR):
+        raise FileNotFoundError(
+            f"FAISS index not found at '{FAISS_DIR}'. "
+            "Run vector_database_creator.py first to create it."
+        )
+    vectorstore = FAISS.load_local(
+        FAISS_DIR, 
+        embeddings, 
+        allow_dangerous_deserialization=True
+    )
+    print(f"FAISS vector store loaded from '{FAISS_DIR}' with {vectorstore.index.ntotal} vectors.")
+    return vectorstore
