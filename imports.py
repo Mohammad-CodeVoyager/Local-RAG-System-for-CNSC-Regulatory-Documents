@@ -32,3 +32,6 @@ FAISS_DIR = os.path.join(os.getcwd(), "faiss_index") # Where the vector DB is sa
 print(f"PDF folder : {DATA_DIR}")
 print(f"FAISS index: {FAISS_DIR}")
 print("All imports loaded successfully.")
+
+from text_splitter import load_and_process_pdfs
+from model_n_embedding import get_embedding_model, create_vectorstore, save_vectorstore 
